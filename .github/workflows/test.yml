@@ -1,25 +1,33 @@
 name: 'build-test'
-on: # rebuild any PRs and main branch changes
+
+on:
   pull_request:
-  push:
     branches:
       - main
       - 'releases/*'
+  push:
 
 jobs:
-  build: # make sure build/ci work properly
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
+      - name: npm cache
+        uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
 
-      - run: |
-          npm ci
+      - name: Install dependencies
+        run: npm ci
 
-      - run: |
-          npm run all
+      - name: Static analysis
+        run: npm run all
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test
 
