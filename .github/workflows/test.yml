@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Static analysis
-        run: npm run all
+        run: npm run check
 
       - name: Build
         run: npm run build
