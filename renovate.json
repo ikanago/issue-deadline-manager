@@ -6,5 +6,8 @@
   ],
   "labels": [
     "dependencies"
-  ]
+  ],
+  "pin": {
+    "automerge": true
+  }
 }
