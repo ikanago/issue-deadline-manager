@@ -65,21 +65,22 @@ const parseIssueBodyOrComment = (content: string): Date | null => {
             return date;
         })
         .filter((date: Date | null): date is Date => Boolean(date));
-    if (parsedDates.length == 0) {
+
+    if (parsedDates.length === 0) {
         return null;
     }
     return parsedDates[parsedDates.length - 1];
 };
 
 const parseCommand = (line: string): Date | null => {
-    const tokens = line.split(' ').filter(token => token != '');
+    const tokens = line.split(' ').filter(token => token !== '');
     const commandTokenIndex = tokens.indexOf('/deadline');
-    if (commandTokenIndex == -1) {
+    if (commandTokenIndex === -1) {
         return null;
     }
 
     const [date, time] = tokens.slice(commandTokenIndex + 1);
-    if (date == undefined) {
+    if (date === undefined) {
         return null;
     }
 

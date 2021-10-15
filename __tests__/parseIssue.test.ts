@@ -20,33 +20,25 @@ test('/deadline yyyy/MM/dd HH:mm', () => {
 test('/deadline yyyy/MM/dd', () => {
     const comment = `Homework
     /deadline 2021/12/01`;
-    expect(parseIssueBodyOrComment(comment)).toEqual(
-        new Date(2021, 11, 1)
-    );
+    expect(parseIssueBodyOrComment(comment)).toEqual(new Date(2021, 11, 1));
 });
 
 test('/deadline MM/dd', () => {
     const comment = `Homework
     /deadline 2021/12/01`;
-    expect(parseIssueBodyOrComment(comment)).toEqual(
-        new Date(2021, 11, 1)
-    );
+    expect(parseIssueBodyOrComment(comment)).toEqual(new Date(2021, 11, 1));
 });
 
 test('/deadline MM/dd', () => {
     const comment = `Homework
     /deadline 2021/12/01`;
-    expect(parseIssueBodyOrComment(comment)).toEqual(
-        new Date(2021, 11, 1)
-    );
+    expect(parseIssueBodyOrComment(comment)).toEqual(new Date(2021, 11, 1));
 });
 
 test('/deadline M/d', () => {
     const comment = `Homework
     /deadline 2021/3/1`;
-    expect(parseIssueBodyOrComment(comment)).toEqual(
-        new Date(2021, 2, 1)
-    );
+    expect(parseIssueBodyOrComment(comment)).toEqual(new Date(2021, 2, 1));
 });
 
 test('/deadline yyyy/MM/dd H:m', () => {
@@ -68,7 +60,5 @@ test('Multiple commands', () => {
     const comment = `Blah blah /deadline 2021/12/01 09:12
     /deadline 2021/11/1
     /deadline 2021/1/1`;
-    expect(parseIssueBodyOrComment(comment)).toEqual(
-        new Date(2021, 0, 1)
-    );
+    expect(parseIssueBodyOrComment(comment)).toEqual(new Date(2021, 0, 1));
 });
