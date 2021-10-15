@@ -1,6 +1,14 @@
 import {parseIssueBodyOrComment} from '../src/label';
 import {expect, test} from '@jest/globals';
 
+test('No command', () => {
+    expect(parseIssueBodyOrComment('Blah blah')).toBeNull();
+});
+
+test('Lack of /deadline', () => {
+    expect(parseIssueBodyOrComment('2021/12/01')).toBeNull();
+});
+
 test('/deadline yyyy/MM/dd HH:mm', () => {
     const comment = `Homework
     /deadline 2021/12/01  09:12`;
