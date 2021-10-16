@@ -1,4 +1,4 @@
-import {parseIssueBodyOrComment} from '../src/label';
+import {parseIssueBodyOrComment} from '../src/parse';
 import {expect, test} from '@jest/globals';
 
 test('No command', () => {
