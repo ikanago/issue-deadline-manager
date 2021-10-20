@@ -1,13 +1,16 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
-    ":pinDevDependencies"
+    "config:base"
   ],
   "labels": [
     "dependencies"
   ],
-  "pin": {
-    "automerge": true
-  }
+  "packageRules": [
+    {
+      "matchDepTypes": ["devDependencies"],
+      "rangeStrategy": "pin",
+      "automerge": true
+    }
+  ]
 }
