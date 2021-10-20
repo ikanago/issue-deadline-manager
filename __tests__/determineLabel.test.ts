@@ -1,5 +1,6 @@
 import {expect, test} from '@jest/globals';
 import {determineLabel} from '../src/label';
+import {zonedTimeToUtc} from 'date-fns-tz';
 
 test('outdated', () => {
     const deadline = new Date(2021, 10, 1, 9, 0, 0);
@@ -42,4 +43,12 @@ test.each([
 ])('4 weeks before', (deadline, expected) => {
     const now = new Date(2021, 10, 1);
     expect(determineLabel(deadline, now)).toEqual(expected);
+});
+
+test.each([
+    [new Date(2021, 10, 20, 11, 0, 0), 'Europe/Paris'], // +0100, not summer time
+    [new Date(2021, 10, 20, 10, 0, 0), '-0300'],
+])('Compare with deadline in different time zone', (deadline, timeZone) => {
+    const now = zonedTimeToUtc(new Date(2021, 10, 20, 14, 0, 0), 'UTC');
+    expect(determineLabel(deadline, now, timeZone)).toEqual('outdated');
 });
