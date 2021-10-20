@@ -44,4 +44,3 @@ const determineLabel = (deadline: Date, now: Date): DeadlineLabel => {
 };
 
 export {determineLabel};
-

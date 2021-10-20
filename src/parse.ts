@@ -14,9 +14,7 @@ const parseIssueBodyOrComment = (content: string): Date | null => {
         .map(line => parseCommand(line))
         .map((date: Date | null) => {
             if (date instanceof Date) {
-                if (Number.isNaN(date.getTime())) {
-                    return null;
-                }
+                return invalidDateToNull(date);
             }
             return date;
         })
@@ -47,6 +45,13 @@ const parseCommand = (line: string): Date | null => {
         parsedDate = parse(date, 'yyyy/MM/dd', new Date());
     }
     return parsedDate;
+};
+
+const invalidDateToNull = (date: Date): Date | null => {
+    if (Number.isNaN(date.getTime())) {
+        return null;
+    }
+    return date;
 };
 
 export {parseIssueBodyOrComment};
