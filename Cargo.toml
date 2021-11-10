@@ -8,4 +8,6 @@ edition = "2018"
 [dependencies]
 chrono = "0.4.19"
 chrono-tz = "0.6.0"
+octocrab = "0.13.0"
 thiserror = "1.0.30"
+tokio = { version = "1.13.0", features = ["rt-multi-thread", "macros"] }

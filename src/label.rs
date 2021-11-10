@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use chrono::{DateTime, TimeZone, Utc};
 
 #[derive(Debug, PartialEq, Eq)]
@@ -6,6 +8,17 @@ pub enum DeadlineLabel {
     DaysBefore(i64),
     WeeksBefore(i64),
     MonthsBefore(i64),
+}
+
+impl Display for DeadlineLabel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            &Self::Outdated => write!(f, "outdated"),
+            &Self::DaysBefore(days) => write!(f, "{} days", days),
+            &Self::WeeksBefore(weeks) => write!(f, "{} weeks", weeks),
+            &Self::MonthsBefore(months) => write!(f, "{} months", months),
+        }
+    }
 }
 
 /// Determines label type based on deadline and current time.
