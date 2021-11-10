@@ -8,6 +8,7 @@ pub enum DeadlineLabel {
     MonthsBefore(i64),
 }
 
+/// Determines label type based on deadline and current time.
 pub fn determine_label<Tz1, Tz2>(deadline: DateTime<Tz1>, now: DateTime<Tz2>) -> DeadlineLabel
 where
     Tz1: TimeZone,

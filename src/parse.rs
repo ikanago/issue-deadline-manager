@@ -10,6 +10,11 @@ pub enum ParseError {
     Empty,
 }
 
+/// Parse an issue body or comment which may contain command to specify deadline.
+/// The command format is `/deadline ${DATE} ${TIME}`.
+/// DATE format is 'yyyy-MM-dd' or 'MM-dd'.
+/// TIME is optional. The format is `HH-mm`.
+/// If there are multiple commands in the content, adopt the last one.
 pub fn parse_issue(content: &str, timezone: Tz, year: i32) -> Result<DateTime<Tz>, ParseError> {
     content
         .split('\n')
