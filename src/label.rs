@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, TimeZone, Utc};
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum DeadlineLabel {
@@ -8,7 +8,14 @@ pub enum DeadlineLabel {
     MonthsBefore(i64),
 }
 
-pub fn determine_label(deadline: DateTime<Utc>, now: DateTime<Utc>) -> DeadlineLabel {
+pub fn determine_label<Tz1, Tz2>(deadline: DateTime<Tz1>, now: DateTime<Tz2>) -> DeadlineLabel
+where
+    Tz1: TimeZone,
+    Tz2: TimeZone,
+{
+    let deadline = deadline.with_timezone(&Utc);
+    let now = now.with_timezone(&Utc);
+
     if is_after(now, deadline) {
         return DeadlineLabel::Outdated;
     }
@@ -35,7 +42,7 @@ fn is_after(datetime1: DateTime<Utc>, datetime2: DateTime<Utc>) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use chrono::TimeZone;
+    use chrono::FixedOffset;
 
     use super::*;
 
@@ -113,6 +120,19 @@ mod tests {
         let now = Utc.ymd(2021, 11, 1).and_hms(0, 0, 0);
         for (deadline, label) in testcases {
             assert_eq!(determine_label(deadline, now), label);
+        }
+    }
+
+    #[test]
+    fn different_timezone() {
+        let testcases = vec![
+            Utc.ymd(2021, 11, 20).and_hms(11, 0, 0).with_timezone(&FixedOffset::east(1 * 3600)),
+            Utc.ymd(2021, 11, 20).and_hms(10, 0, 0).with_timezone(&FixedOffset::west(3 * 3600)),
+        ];
+
+        let now = Utc.ymd(2021, 11, 20).and_hms(14, 0, 0);
+        for deadline in testcases {
+            assert_eq!(determine_label(deadline, now), DeadlineLabel::Outdated);
         }
     }
 }
