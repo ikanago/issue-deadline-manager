@@ -25,7 +25,8 @@ pub fn determine_label(deadline: DateTime<Utc>, now: DateTime<Utc>) -> DeadlineL
         return DeadlineLabel::WeeksBefore(weeks_before);
     }
 
-    DeadlineLabel::Outdated
+    let months_before = duration.num_weeks() / 4;
+    DeadlineLabel::MonthsBefore(months_before)
 }
 
 fn is_after(datetime1: DateTime<Utc>, datetime2: DateTime<Utc>) -> bool {
@@ -67,5 +68,51 @@ mod tests {
             determine_label(deadline, now),
             DeadlineLabel::WeeksBefore(1)
         );
+    }
+
+    #[test]
+    fn weeks_before() {
+        let testcases = vec![
+            (
+                Utc.ymd(2021, 11, 14).and_hms(0, 0, 0),
+                DeadlineLabel::WeeksBefore(1),
+            ),
+            (
+                Utc.ymd(2021, 11, 15).and_hms(0, 0, 0),
+                DeadlineLabel::WeeksBefore(2),
+            ),
+            (
+                Utc.ymd(2021, 11, 21).and_hms(0, 0, 0),
+                DeadlineLabel::WeeksBefore(2),
+            ),
+            (
+                Utc.ymd(2021, 11, 22).and_hms(0, 0, 0),
+                DeadlineLabel::WeeksBefore(3),
+            ),
+        ];
+
+        let now = Utc.ymd(2021, 11, 1).and_hms(0, 0, 0);
+        for (deadline, label) in testcases {
+            assert_eq!(determine_label(deadline, now), label);
+        }
+    }
+
+    #[test]
+    fn four_weeks_before() {
+        let testcases = vec![
+            (
+                Utc.ymd(2021, 11, 28).and_hms(0, 0, 0),
+                DeadlineLabel::WeeksBefore(3),
+            ),
+            (
+                Utc.ymd(2021, 11, 29).and_hms(0, 0, 0),
+                DeadlineLabel::MonthsBefore(1),
+            ),
+        ];
+
+        let now = Utc.ymd(2021, 11, 1).and_hms(0, 0, 0);
+        for (deadline, label) in testcases {
+            assert_eq!(determine_label(deadline, now), label);
+        }
     }
 }
