@@ -126,8 +126,12 @@ mod tests {
     #[test]
     fn different_timezone() {
         let testcases = vec![
-            Utc.ymd(2021, 11, 20).and_hms(11, 0, 0).with_timezone(&FixedOffset::east(1 * 3600)),
-            Utc.ymd(2021, 11, 20).and_hms(10, 0, 0).with_timezone(&FixedOffset::west(3 * 3600)),
+            Utc.ymd(2021, 11, 20)
+                .and_hms(11, 0, 0)
+                .with_timezone(&FixedOffset::east(1 * 3600)),
+            Utc.ymd(2021, 11, 20)
+                .and_hms(10, 0, 0)
+                .with_timezone(&FixedOffset::west(3 * 3600)),
         ];
 
         let now = Utc.ymd(2021, 11, 20).and_hms(14, 0, 0);
