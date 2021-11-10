@@ -12,11 +12,11 @@ pub enum DeadlineLabel {
 
 impl Display for DeadlineLabel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            &Self::Outdated => write!(f, "outdated"),
-            &Self::DaysBefore(days) => write!(f, "{} days", days),
-            &Self::WeeksBefore(weeks) => write!(f, "{} weeks", weeks),
-            &Self::MonthsBefore(months) => write!(f, "{} months", months),
+        match *self {
+            Self::Outdated => write!(f, "outdated"),
+            Self::DaysBefore(days) => write!(f, "{} days", days),
+            Self::WeeksBefore(weeks) => write!(f, "{} weeks", weeks),
+            Self::MonthsBefore(months) => write!(f, "{} months", months),
         }
     }
 }

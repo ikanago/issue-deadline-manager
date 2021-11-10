@@ -1,21 +1,16 @@
 use issue_deadline_manager::{
     label::DeadlineLabel,
-    runner::{Runner, RunnerConfig},
+    runner::{Config, Runner},
 };
 
 #[tokio::main]
 async fn main() {
-    let token = match std::env::var("GITHUB_TOKEN") {
-        Ok(token) => token,
+    let (config, token) = match Config::initialize() {
+        Ok((config, token)) => (config, token),
         Err(err) => {
             eprintln!("{}", err);
             std::process::exit(1);
         }
-    };
-
-    let config = RunnerConfig {
-        owner: "ikanago".to_string(),
-        repository: "issue-deadline-manager".to_string(),
     };
 
     let runner = Runner::new(token, config);
