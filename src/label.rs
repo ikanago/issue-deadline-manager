@@ -10,7 +10,7 @@ pub enum DeadlineLabel {
 
 pub fn determine_label(deadline: DateTime<Utc>, now: DateTime<Utc>) -> DeadlineLabel {
     if is_after(now, deadline) {
-        return DeadlineLabel::Outdated
+        return DeadlineLabel::Outdated;
     }
 
     let duration = deadline.signed_duration_since(now);
@@ -63,6 +63,9 @@ mod tests {
     fn just_one_week_before_seven_days_before() {
         let deadline = Utc.ymd(2021, 11, 8).and_hms(9, 0, 0);
         let now = Utc.ymd(2021, 11, 1).and_hms(9, 0, 0);
-        assert_eq!(determine_label(deadline, now), DeadlineLabel::WeeksBefore(1));
+        assert_eq!(
+            determine_label(deadline, now),
+            DeadlineLabel::WeeksBefore(1)
+        );
     }
 }
