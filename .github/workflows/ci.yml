@@ -7,6 +7,9 @@ on:
       - main
       - 'releases/*'
 
+env:
+  CARGO_INCREMENTAL: 0
+
 jobs:
   ci:
     runs-on: ubuntu-20.04
@@ -27,7 +30,7 @@ jobs:
         run: cargo fmt -- --check
 
       - name: Build
-        run: cargo build --verbose
+        run: cargo build --verbose --locked
 
       - run: rustup component add clippy
       - uses: actions-rs/clippy-check@v1

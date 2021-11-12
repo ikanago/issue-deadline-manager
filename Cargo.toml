@@ -13,3 +13,9 @@ envconfig_derive = "0.10.0"
 octocrab = "0.13.0"
 thiserror = "1.0.30"
 tokio = { version = "1.13.0", features = ["rt-multi-thread", "macros"] }
+
+[profile.dev]
+# Disabling debug info speeds up builds a bunch,
+# and we don't rely on it for debugging that much.
+debug = 0
+
