@@ -1,4 +1,6 @@
-FROM lukemathwalker/cargo-chef:latest-rust-1.56.1-alpine3.14 AS chef
+FROM rust:1.56 AS chef
+RUN cargo install cargo-chef \
+    && rm -rf "${CARGO_HOME}/registry"
 
 FROM chef AS planner
 WORKDIR plan
@@ -11,7 +13,6 @@ COPY --from=planner /plan/recipe.json recipe.json
 RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 RUN cargo build --release
-RUN ls -la ./target/release
 
 FROM gcr.io/distroless/base
 WORKDIR app
