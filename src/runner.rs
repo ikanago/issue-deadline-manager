@@ -76,7 +76,7 @@ impl Runner {
         }
 
         let now = chrono::Local::now();
-        let deadline = match parse_issue(&issue.body.as_ref().unwrap(), Tz::Asia__Tokyo, now.year())
+        let deadline = match parse_issue(issue.body.as_ref().unwrap(), Tz::Asia__Tokyo, now.year())
         {
             Ok(deadline) => deadline,
             Err(ParseError::Empty) => return Ok(()),
