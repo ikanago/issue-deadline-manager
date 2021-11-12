@@ -51,5 +51,6 @@ jobs:
         file: Dockerfile
         push: ${{ github.ref == 'refs/heads/main' }}
         tags: ${{ steps.metadata.outputs.tags }}
+        labels: ${{ steps.metadata.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
