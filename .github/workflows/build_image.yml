@@ -9,10 +9,10 @@ on:
   pull_request:
     paths:
       - 'src/**'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - 'Dockerfile'
-      - '.github/workflows/build_image.yml'
+      - Cargo.toml
+      - Cargo.lock
+      - Dockerfile
+      - .github/workflows/build_image.yml
 
 jobs:
   build:
