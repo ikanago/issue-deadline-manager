@@ -106,8 +106,7 @@ impl Runner {
             .labels
             .iter()
             .map(|label| &label.name)
-            .find(|&name| name == &label.to_string())
-            .is_some()
+            .any(|name| name == &label.to_string())
     }
 
     async fn remove_existing_labels(&self, issue: &Issue) -> octocrab::Result<()> {
