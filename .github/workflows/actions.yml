@@ -9,8 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-20.04
-    permissions:
-      issues: write
     steps:
       - uses: actions/checkout@v2
 

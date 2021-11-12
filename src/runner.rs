@@ -92,7 +92,7 @@ impl Runner {
         }
 
         self.remove_existing_labels(&issue).await?;
-        self.register_label(&label).await?;
+        self.create_label(&label).await?;
         self.client
             .issues(&self.config.owner, &self.config.repository)
             .add_labels(issue.number as u64, &[label.to_string()])
@@ -125,11 +125,28 @@ impl Runner {
         Ok(())
     }
 
-    pub async fn register_label(&self, label: &DeadlineLabel) -> octocrab::Result<()> {
+    pub async fn create_label(&self, label: &DeadlineLabel) -> octocrab::Result<()> {
+        if self.check_label_existance(label).await? {
+            return Ok(());
+        }
+
         self.client
             .issues(&self.config.owner, &self.config.repository)
             .create_label(label.to_string(), "ff0000", "")
             .await?;
         Ok(())
+    }
+
+    async fn check_label_existance(&self, label: &DeadlineLabel) -> octocrab::Result<bool> {
+        match self
+            .client
+            .issues(&self.config.owner, &self.config.repository)
+            .get_label(label.to_string())
+            .await
+        {
+            Ok(_) => Ok(true),
+            Err(octocrab::Error::GitHub { .. }) => Ok(false),
+            Err(err) => Err(err),
+        }
     }
 }
