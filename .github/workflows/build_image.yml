@@ -1,12 +1,18 @@
 name: 'Build Docker image'
 
 on:
-  # push:
-  #   branches:
-  #     - main
-  #   tags:
-  #     - v*
+  push:
+    branches:
+      - main
+    tags:
+      - v*
   pull_request:
+    paths:
+      - 'src/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'Dockerfile'
+      - '.github/workflows/build_image.yml'
 
 jobs:
   build:
@@ -26,7 +32,6 @@ jobs:
       with:
         images: ${{ env.CONTAINER_REGISTRY }}/${{ github.repository }}
         tags: |
-          type=raw,value=latest
           type=semver,pattern=v{{version}}
           type=semver,pattern=v{{major}}.{{minor}}
           type=semver,pattern=v{{major}}
@@ -43,8 +48,7 @@ jobs:
       with:
         context: .
         file: Dockerfile
-        # push: ${{ github.ref == 'refs/heads/main' }}
-        push: true
+        push: ${{ github.ref == 'refs/heads/main' }}
         tags: ${{ steps.metadata.outputs.tags }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
