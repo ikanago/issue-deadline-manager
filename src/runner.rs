@@ -1,10 +1,15 @@
+use chrono::Datelike;
+use chrono_tz::Tz;
 use envconfig::Envconfig;
-use octocrab::Octocrab;
+use octocrab::{models::issues::Issue, Octocrab};
 
-use crate::label::DeadlineLabel;
+use crate::{
+    label::{determine_label, DeadlineLabel},
+    parse::{parse_issue, ParseError},
+};
 
 #[derive(Debug, Envconfig)]
-struct ConfigBuilder {
+struct RawConfig {
     #[envconfig(from = "GITHUB_TOKEN")]
     token: String,
     #[envconfig(from = "GITHUB_REPOSITORY")]
@@ -16,9 +21,9 @@ pub struct Config {
     pub repository: String,
 }
 
-impl Config{
+impl Config {
     pub fn initialize() -> Result<(Self, String), envconfig::Error> {
-        let builder = ConfigBuilder::init_from_env()?;
+        let builder = RawConfig::init_from_env()?;
 
         let mut owner_and_repo = builder.repository.split('/');
         let owner = owner_and_repo.next().ok_or(envconfig::Error::ParseError {
@@ -50,28 +55,82 @@ impl Runner {
         Self { client, config }
     }
 
-    pub async fn register_labels(&self, labels: &[DeadlineLabel]) -> octocrab::Result<()> {
-        for label in labels {
-            if !self.check_label_existance(label).await? {
-                self.client
-                    .issues(&self.config.owner, &self.config.repository)
-                    .create_label(label.to_string(), "ff0000", "")
-                    .await?;
-            }
+    /// Fetch open issues and add deadline labels based on a command in issue body.
+    pub async fn update_labels(&self) -> octocrab::Result<()> {
+        let issues = self
+            .client
+            .issues(&self.config.owner, &self.config.repository)
+            .list()
+            .send()
+            .await?;
+
+        for issue in issues {
+            self.update_label_in_issue(issue).await?;
         }
         Ok(())
     }
 
-    async fn check_label_existance(&self, label: &DeadlineLabel) -> octocrab::Result<bool> {
-        match self
-            .client
-            .issues(&self.config.owner, &self.config.repository)
-            .get_label(label.to_string())
-            .await
-        {
-            Ok(_) => Ok(true),
-            Err(octocrab::Error::GitHub { .. }) => Ok(false),
-            Err(err) => Err(err),
+    async fn update_label_in_issue(&self, issue: Issue) -> octocrab::Result<()> {
+        if issue.body.is_none() {
+            return Ok(());
         }
+
+        let now = chrono::Local::now();
+        let deadline = match parse_issue(&issue.body.as_ref().unwrap(), Tz::Asia__Tokyo, now.year())
+        {
+            Ok(deadline) => deadline,
+            Err(ParseError::Empty) => return Ok(()),
+            Err(err) => {
+                eprintln!("{}", err);
+                return Ok(());
+            }
+        };
+        let label = determine_label(deadline, now);
+
+        if Self::is_label_already_added(&issue, &label) {
+            return Ok(());
+        }
+
+        self.remove_existing_labels(&issue).await?;
+        self.register_label(&label).await?;
+        self.client
+            .issues(&self.config.owner, &self.config.repository)
+            .add_labels(issue.number as u64, &[label.to_string()])
+            .await?;
+
+        Ok(())
+    }
+
+    fn is_label_already_added(issue: &Issue, label: &DeadlineLabel) -> bool {
+        issue
+            .labels
+            .iter()
+            .map(|label| &label.name)
+            .find(|&name| name == &label.to_string())
+            .is_some()
+    }
+
+    async fn remove_existing_labels(&self, issue: &Issue) -> octocrab::Result<()> {
+        let deadline_labels = issue
+            .labels
+            .iter()
+            .filter(|label| label.name.starts_with(DeadlineLabel::LABEL_PREFIX));
+
+        for label in deadline_labels {
+            self.client
+                .issues(&self.config.owner, &self.config.repository)
+                .remove_label(issue.number as u64, &label.name)
+                .await?;
+        }
+
+        Ok(())
+    }
+
+    pub async fn register_label(&self, label: &DeadlineLabel) -> octocrab::Result<()> {
+        self.client
+            .issues(&self.config.owner, &self.config.repository)
+            .create_label(label.to_string(), "ff0000", "")
+            .await?;
+        Ok(())
     }
 }

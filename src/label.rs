@@ -10,13 +10,21 @@ pub enum DeadlineLabel {
     MonthsBefore(i64),
 }
 
+impl DeadlineLabel {
+    pub const LABEL_PREFIX: &'static str = "Deadline:";
+}
+
 impl Display for DeadlineLabel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
-            Self::Outdated => write!(f, "outdated"),
-            Self::DaysBefore(days) => write!(f, "{} days", days),
-            Self::WeeksBefore(weeks) => write!(f, "{} weeks", weeks),
-            Self::MonthsBefore(months) => write!(f, "{} months", months),
+            Self::Outdated => write!(f, "{} outdated", DeadlineLabel::LABEL_PREFIX),
+            Self::DaysBefore(days) => write!(f, "{} {} days", DeadlineLabel::LABEL_PREFIX, days),
+            Self::WeeksBefore(weeks) => {
+                write!(f, "{} {} weeks", DeadlineLabel::LABEL_PREFIX, weeks)
+            }
+            Self::MonthsBefore(months) => {
+                write!(f, "{} {} months", DeadlineLabel::LABEL_PREFIX, months)
+            }
         }
     }
 }

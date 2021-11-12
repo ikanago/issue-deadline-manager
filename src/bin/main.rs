@@ -14,7 +14,7 @@ async fn main() {
     };
 
     let runner = Runner::new(token, config);
-    if let Err(err) = runner.register_labels(&[DeadlineLabel::Outdated]).await {
+    if let Err(err) = runner.update_labels().await {
         eprintln!("{}", err);
         std::process::exit(1);
     }
