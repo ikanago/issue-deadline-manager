@@ -3,7 +3,7 @@ name: 'action lint'
 on:
   pull_request:
     paths:
-      - '.github/workflow/**'
+      - '.github/workflows/**'
 
 jobs:
   lint:
