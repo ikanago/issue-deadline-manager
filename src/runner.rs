@@ -1,6 +1,5 @@
 use chrono::Datelike;
 use chrono_tz::Tz;
-use envconfig::Envconfig;
 use octocrab::{models::issues::Issue, Octocrab};
 
 use crate::{
@@ -8,36 +7,23 @@ use crate::{
     parse::{parse_issue, ParseError},
 };
 
-#[derive(Debug, Envconfig)]
-struct RawConfig {
-    #[envconfig(from = "GITHUB_TOKEN")]
-    token: String,
-    #[envconfig(from = "GITHUB_REPOSITORY")]
-    repository: String,
-}
-
 pub struct Config {
     pub owner: String,
     pub repository: String,
 }
 
 impl Config {
-    pub fn initialize() -> Result<(Self, String), envconfig::Error> {
-        let builder = RawConfig::init_from_env()?;
+    pub fn new(repository: String) -> Self {
+        let mut owner_and_repo = repository.split('/');
+        let owner = owner_and_repo.next().expect("GITHUB_REPOSITORY is empty");
+        let repository = owner_and_repo
+            .next()
+            .expect("Repository name in GITHUB_REPOSITORY is empty");
 
-        let mut owner_and_repo = builder.repository.split('/');
-        let owner = owner_and_repo.next().ok_or(envconfig::Error::ParseError {
-            name: "GITHUB_REPOSITORY is empty",
-        })?;
-        let repository = owner_and_repo.next().ok_or(envconfig::Error::ParseError {
-            name: "Repository name in GITHUB_REPOSITORY is empty",
-        })?;
-
-        let config = Config {
+        Config {
             owner: owner.to_string(),
             repository: repository.to_string(),
-        };
-        Ok((config, builder.token))
+        }
     }
 }
 
