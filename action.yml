@@ -12,7 +12,7 @@ inputs:
     required: true
 runs:
   using: 'docker'
-  image: docker://ghcr.io/ikanago/issue-deadline-manager:main
+  image: docker://ghcr.io/ikanago/issue-deadline-manager:0.2.0
   args:
     - ${{ inputs.token }}
     - ${{ inputs.repository }}
