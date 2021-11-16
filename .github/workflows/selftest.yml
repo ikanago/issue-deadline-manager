@@ -2,14 +2,11 @@ name: "Self test"
 
 on:
   pull_request:
-    branches:
-      - main
-      - 'releases/*'
 
 jobs:
   actions:
     runs-on: ubuntu-20.04
     steps:
       - name: Run actions
-        uses: ikanago/issue-deadline-manager@main
+        uses: ./
 
