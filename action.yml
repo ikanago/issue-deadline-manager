@@ -3,9 +3,9 @@ description: 'You can auto-label to issues according to deadline'
 author: 'ikanago'
 inputs:
   token:
-    required: false
     description: 'GITHUB_TOKEN'
     default: '${{ github.token }}'
+    required: true
 runs:
   using: 'docker'
   image: ghcr.io/ikanago/issue-deadline-manager:main
