@@ -14,5 +14,5 @@ jobs:
       - name: Run actionlint
         uses: reviewdog/action-actionlint@v1
         with:
-          reporter: 'gh-pr-review'
+          reporter: 'github-pr-review'
           fail_on_error: true

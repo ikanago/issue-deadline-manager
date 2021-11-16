@@ -11,7 +11,7 @@ runs:
   image: ghcr.io/ikanago/issue-deadline-manager:main
   args:
     - ${{ inputs.token }}
-    - ${{ github.repository }}
+    - $GITHUB_REPOSITORY
 branding:
   icon: 'list'
   color: 'green'
