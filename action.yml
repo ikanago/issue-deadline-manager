@@ -6,12 +6,16 @@ inputs:
     description: 'GITHUB_TOKEN'
     default: '${{ github.token }}'
     required: true
+  repository:
+    description: 'Repository name in format "OWNER/REPO_NAME"'
+    default: ${{ github.repository }}
+    required: true
 runs:
   using: 'docker'
   image: docker://ghcr.io/ikanago/issue-deadline-manager:main
   args:
     - ${{ inputs.token }}
-    - $GITHUB_REPOSITORY
+    - ${{ inputs.repository }}
 branding:
   icon: 'list'
   color: 'green'
