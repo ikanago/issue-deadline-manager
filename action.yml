@@ -1,11 +1,21 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Help utilize GitHub issue as TODO list'
+description: 'You can auto-label to issues according to deadline'
+author: 'ikanago'
 inputs:
-  milliseconds: # change this
+  token:
+    description: 'GITHUB_TOKEN'
+    default: '${{ github.token }}'
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  repository:
+    description: 'Repository name in format "OWNER/REPO_NAME"'
+    default: ${{ github.repository }}
+    required: true
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: 'docker'
+  image: docker://ghcr.io/ikanago/issue-deadline-manager:main
+  args:
+    - ${{ inputs.token }}
+    - ${{ inputs.repository }}
+branding:
+  icon: 'list'
+  color: 'green'
