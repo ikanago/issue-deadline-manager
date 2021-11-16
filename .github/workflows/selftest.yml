@@ -11,5 +11,5 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Run actions
-        uses: ikanago/issue-deadline-manager@50-interface
+        uses: ikanago/issue-deadline-manager@main
 
