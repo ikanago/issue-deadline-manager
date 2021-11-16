@@ -28,7 +28,5 @@ jobs:
         run: cargo build --verbose
 
       - name: Run actions
-        run: cargo run
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ikanago/issue-deadline-manager
 
