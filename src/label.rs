@@ -15,7 +15,7 @@ impl DeadlineLabel {
 
     pub fn describe(&self) -> String {
         match *self {
-            Self::Outdated => format!("outdated"),
+            Self::Outdated => "outdated".to_string(),
             Self::DaysBefore(days) => format!("{} days", days),
             Self::WeeksBefore(weeks) => {
                 format!("{} weeks", weeks)

@@ -143,7 +143,10 @@ impl Runner {
     ) -> octocrab::Result<()> {
         self.client
             .issues(&self.config.owner, &self.config.repository)
-            .create_comment(issue.number as u64, format!("{} remains until deadline.", new_label.describe()))
+            .create_comment(
+                issue.number as u64,
+                format!("{} remains until deadline.", new_label.describe()),
+            )
             .await?;
         Ok(())
     }
