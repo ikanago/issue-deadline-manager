@@ -25,6 +25,15 @@ impl DeadlineLabel {
             }
         }
     }
+
+    pub fn color(&self) -> String {
+        match *self {
+            Self::Outdated => "FF0000".to_string(),
+            Self::DaysBefore(_) => "B60205".to_string(),
+            Self::WeeksBefore(_) => "FBCA04".to_string(),
+            Self::MonthsBefore(_) => "0E8A16".to_string(),
+        }
+    }
 }
 
 impl Display for DeadlineLabel {

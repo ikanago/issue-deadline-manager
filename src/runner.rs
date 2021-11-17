@@ -118,7 +118,7 @@ impl Runner {
 
         self.client
             .issues(&self.config.owner, &self.config.repository)
-            .create_label(label.to_string(), "ff0000", "")
+            .create_label(label.to_string(), label.color(), "")
             .await?;
         Ok(())
     }
