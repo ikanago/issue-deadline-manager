@@ -73,7 +73,7 @@ impl Runner {
         };
         let label = determine_label(deadline, now);
 
-        if Self::is_label_already_added(&issue, &label) {
+        if Self::should_keep_label(&issue, &label) {
             return Ok(());
         }
 
@@ -83,16 +83,16 @@ impl Runner {
             .issues(&self.config.owner, &self.config.repository)
             .add_labels(issue.number as u64, &[label.to_string()])
             .await?;
+        self.notify_deadline(&issue, &label).await?;
 
         Ok(())
     }
 
-    fn is_label_already_added(issue: &Issue, label: &DeadlineLabel) -> bool {
+    fn should_keep_label(issue: &Issue, new_label: &DeadlineLabel) -> bool {
         issue
             .labels
             .iter()
-            .map(|label| &label.name)
-            .any(|name| name == &label.to_string())
+            .any(|label| label.name == new_label.to_string())
     }
 
     async fn remove_existing_labels(&self, issue: &Issue) -> octocrab::Result<()> {
@@ -111,14 +111,14 @@ impl Runner {
         Ok(())
     }
 
-    pub async fn create_label(&self, label: &DeadlineLabel) -> octocrab::Result<()> {
+    async fn create_label(&self, label: &DeadlineLabel) -> octocrab::Result<()> {
         if self.check_label_existance(label).await? {
             return Ok(());
         }
 
         self.client
             .issues(&self.config.owner, &self.config.repository)
-            .create_label(label.to_string(), "ff0000", "")
+            .create_label(label.to_string(), label.color(), "")
             .await?;
         Ok(())
     }
@@ -134,5 +134,20 @@ impl Runner {
             Err(octocrab::Error::GitHub { .. }) => Ok(false),
             Err(err) => Err(err),
         }
+    }
+
+    async fn notify_deadline(
+        &self,
+        issue: &Issue,
+        new_label: &DeadlineLabel,
+    ) -> octocrab::Result<()> {
+        self.client
+            .issues(&self.config.owner, &self.config.repository)
+            .create_comment(
+                issue.number as u64,
+                format!("{} remains until deadline.", new_label.describe()),
+            )
+            .await?;
+        Ok(())
     }
 }

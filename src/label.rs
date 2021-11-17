@@ -11,21 +11,34 @@ pub enum DeadlineLabel {
 }
 
 impl DeadlineLabel {
-    pub const LABEL_PREFIX: &'static str = "Deadline:";
+    pub const LABEL_PREFIX: &'static str = "Deadline: ";
+
+    pub fn describe(&self) -> String {
+        match *self {
+            Self::Outdated => "outdated".to_string(),
+            Self::DaysBefore(days) => format!("{} days", days),
+            Self::WeeksBefore(weeks) => {
+                format!("{} weeks", weeks)
+            }
+            Self::MonthsBefore(months) => {
+                format!("{} months", months)
+            }
+        }
+    }
+
+    pub fn color(&self) -> String {
+        match *self {
+            Self::Outdated => "FF0000".to_string(),
+            Self::DaysBefore(_) => "B60205".to_string(),
+            Self::WeeksBefore(_) => "FBCA04".to_string(),
+            Self::MonthsBefore(_) => "0E8A16".to_string(),
+        }
+    }
 }
 
 impl Display for DeadlineLabel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            Self::Outdated => write!(f, "{} outdated", DeadlineLabel::LABEL_PREFIX),
-            Self::DaysBefore(days) => write!(f, "{} {} days", DeadlineLabel::LABEL_PREFIX, days),
-            Self::WeeksBefore(weeks) => {
-                write!(f, "{} {} weeks", DeadlineLabel::LABEL_PREFIX, weeks)
-            }
-            Self::MonthsBefore(months) => {
-                write!(f, "{} {} months", DeadlineLabel::LABEL_PREFIX, months)
-            }
-        }
+        write!(f, "{}{}", Self::LABEL_PREFIX, self.describe())
     }
 }
 
