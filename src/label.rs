@@ -11,7 +11,7 @@ pub enum DeadlineLabel {
 }
 
 impl DeadlineLabel {
-    pub const LABEL_PREFIX: &'static str = "Deadline:";
+    pub const LABEL_PREFIX: &'static str = "Deadline: ";
 
     pub fn describe(&self) -> String {
         match *self {
@@ -29,7 +29,7 @@ impl DeadlineLabel {
 
 impl Display for DeadlineLabel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}: {}", Self::LABEL_PREFIX, self.describe())
+        write!(f, "{}{}", Self::LABEL_PREFIX, self.describe())
     }
 }
 
