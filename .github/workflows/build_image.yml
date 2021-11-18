@@ -13,6 +13,7 @@ on:
       - Cargo.lock
       - Dockerfile
       - .github/workflows/build_image.yml
+      - action.yml
 
 jobs:
   build:
@@ -21,31 +22,40 @@ jobs:
       CONTAINER_REGISTRY: ghcr.io
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Set up Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v1
 
-    - name: Docker metadata
-      id: metadata
-      uses: docker/metadata-action@v3
-      with:
-        images: ${{ env.CONTAINER_REGISTRY }}/${{ github.repository }}
+      - name: Docker metadata
+        id: metadata
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.CONTAINER_REGISTRY }}/${{ github.repository }}
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ${{ env.CONTAINER_REGISTRY }}
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build and Push Image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        file: Dockerfile
-        push: ${{ startsWith(github.ref, 'refs/tags/') }}
-        tags: ${{ steps.metadata.outputs.tags }}
-        labels: ${{ steps.metadata.outputs.labels }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+      - name: Build and Push Image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile
+          push: ${{ startsWith(github.ref, 'refs/tags/') }}
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  selftest:
+    runs-on: ubuntu-20.04
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run actions
+        uses: ./
